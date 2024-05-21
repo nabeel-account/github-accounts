@@ -30,7 +30,7 @@ jobs:
 
   deploy:
     # specify max running time for all steps
-    timeout-minutes: 1
+    timeout-minutes: 5
 
     # ensures the docker job is run before it
     needs: docker
