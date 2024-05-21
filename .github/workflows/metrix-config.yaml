@@ -1,0 +1,32 @@
+name: Image CICD
+
+on:
+  workflow_dispatch:
+  push:
+
+jobs:
+    deploy_packages:
+        strategy:
+          # If one step fails, don't fail the entire pipeline
+          fail-fast: false
+    
+          # max 2 steps to be run at any given time
+          max-parallel: 2
+    
+          # matrix configuration: allow you to run a number of steps repeatedly in one code block
+          matrix:
+            os: [ubuntu-latest, ubuntu-20.04, windows-latest]
+            packages: [hello-world, alpine]
+            exlude:
+              - packages: alpine
+                os: windows-latest
+            include:
+              - packages: amd64/alpine
+                os: ubuntu-latest
+        runs-on: ${{ matrix.os }}
+        steps:
+          - name: Echo Docker details
+            run: docker info
+          
+          - name: Run Image on ${{ matrix.os }}
+            run: docker run ${{ matrix.packages }}
