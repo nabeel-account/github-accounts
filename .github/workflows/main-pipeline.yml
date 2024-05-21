@@ -15,6 +15,11 @@ jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
+
+        # Checkout (pull) this repository from the runners
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Docker Build
 
         # demonstrates the use of local environment variables as env.<env-variable> or $<env-variable>
