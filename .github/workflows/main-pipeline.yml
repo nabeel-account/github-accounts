@@ -1,0 +1,42 @@
+name: Image CICD
+
+# This workflow pipeline will be triggered on a PR push
+on: [push]
+
+# Local environment variables
+env:
+  CONTAINER_REGISTRY: docker.io
+  IMAGE_NAME: github-actions-nginx
+
+# jobs that create the CICD pipeline
+jobs:
+  docker:
+    runs-on: ubuntu_latest
+    steps:
+      - name: Docker Build
+
+        # demonstrates the use of local environment variables as env.<env-variable> or $<env-variable>
+        # demonstrates the use of repository based environment variables as var.<repo-env-variable>
+        run: echo docker build -t ${{ env.CONTAINER_REGISTRY }}/${{ vars.DOCKER_USERNAME }}/$IMAGE_NAME:latest
+
+        # demonstrates the use of repository based secret environment variables
+      - name: Docker Login
+        run: echo docker login --username=${{ vars.DOCKER_USERNAME }} --password=${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Docker Publish
+        run: echo docker push ${{ env.CONTAINER_REGISTRY }}/${{ vars.DOCKER_USERNAME }}/$IMAGE_NAME:latest
+
+  deploy:
+    # ensures the docker job is run before it
+    needs: docker
+
+    # cancels previous running deployment of this job if a new job is triggered in a new pipeline
+    concurrency:
+      group: production-deployment
+      cancel-in-progress: true
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Docker Run
+        run: |
+          echo docker run -d -p 8080:80 ${{ env.CONTAINER_REGISTRY }}/${{ vars.DOCKER_USERNAME }}/$IMAGE_NAME:latest
