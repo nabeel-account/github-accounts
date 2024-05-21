@@ -2,8 +2,8 @@ name: Image CICD
 
 # This workflow pipeline will be triggered on a PR push
 on:
-  - push
   - workflow_dispatch
+  - push
 
 # Local environment variables
 env:
