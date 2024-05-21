@@ -29,6 +29,9 @@ jobs:
         run: echo docker push ${{ env.CONTAINER_REGISTRY }}/${{ vars.DOCKER_USERNAME }}/$IMAGE_NAME:latest
 
   deploy:
+    # specify max running time for all steps
+    timeout-minutes: 1
+
     # ensures the docker job is run before it
     needs: docker
 
@@ -41,5 +44,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Docker Run
+
+        # specify max running time for this steps
+        timeout-minutes: 1
         run: |
           echo docker run -d -p 8080:80 ${{ env.CONTAINER_REGISTRY }}/${{ vars.DOCKER_USERNAME }}/$IMAGE_NAME:latest
+          sleep 600s
