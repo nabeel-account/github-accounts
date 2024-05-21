@@ -3,7 +3,7 @@ name: Image CICD
 # This workflow pipeline will be triggered on a PR push
 on:
   - workflow_dispatch
-  - push
+  # - push
 
 # Local environment variables
 env:
@@ -33,8 +33,9 @@ jobs:
     needs: docker
 
     # cancels previous running deployment of this job if a new job is triggered in a new pipeline
+    # docker-deployment is an arbitrary name 
     concurrency:
-      group: production-deployment
+      group: docker-deployment
       cancel-in-progress: true
 
     runs-on: ubuntu-latest
